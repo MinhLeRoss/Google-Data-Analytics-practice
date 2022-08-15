@@ -1,0 +1,43 @@
+Dataset: Customer_id
+
+SELECT 
+country
+ FROM `delta-repeater-359113.customer_data.customer_address` 
+where
+ length(country) > 2
+
+--result being 2 countries with 3 characters length 'USA'
+--We did not create this table therefore shouldnt change it, but we can use substring function to include USA in the list of all customres from the US
+
+SELECT
+distinct customer_id --removes duplicates
+from
+delta-repeater-359113.customer_data.customer_address
+where
+substr(country,1,2) = 'US' --include USA and US customer 
+
+
+-- Now we clean the state
+select
+state
+from
+delta-repeater-359113.customer_data.customer_address
+where
+length(state)>2
+
+--comes up with 'OH' which is only 2 characters, therefore the extra character must be a space
+--We use the TRIM function to get rid of the extra space
+
+select
+distinct customer_id
+from
+delta-repeater-359113.customer_data.customer_address
+where
+TRIM(state) = 'OH'
+
+--Data set: Customer_purchase
+SELECT
+purchase_price
+  FROM `delta-repeater-359113.customer_data.customer_purchase` 
+order by
+cast (purchase_price as float64) desc --purchase price was set as a string type and not a float, so it did not sort in the correct order, so we cast it into a float type.
